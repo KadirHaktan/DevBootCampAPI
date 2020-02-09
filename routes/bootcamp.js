@@ -8,13 +8,11 @@ route.get('/',controller.GetBootCamps)
 route.get('/:id',controller.GetBootCampById)
 
 route.post('/add',controller.AddBootCamp)
-route.post('/add/:id',controller.AddBootCampById)
 
-route.put('/update',controller.UpdateBootCamp)
-route.put('/update/:id',controller.UpdateBootCampById)
+route.put('/update/:id',controller.UpdateBootCamp)
 
-route.delete('/delete',controller.DeleteBootCamp)
-route.delete('/delete/:id',controller.DeleteBootCampById)
+route.delete('/delete/:id',controller.DeleteBootCamp)
+
 
 
 

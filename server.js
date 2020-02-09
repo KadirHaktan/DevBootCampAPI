@@ -10,6 +10,7 @@ const bootcamp=require('./routes/bootcamp')
 
 const logger=require('./middleware/logger')
 const morgan=require('morgan')
+const errorHandler=require('./middleware/error')
 //Middlewares
 
 
@@ -23,12 +24,15 @@ const PORT=process.env.PORT
 
 ConnectionDb()
 
+app.use(express.json())
 
 if(process.env.NODE_ENV==='development'){
     app.use(morgan('dev'))
 }
 app.use('/api/v1/bootcamps',bootcamp)
 //use the routes with middleware
+
+app.use(errorHandler)
 
 const server=app.listen(PORT,(error)=>{
     if(error){
