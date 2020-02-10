@@ -2,8 +2,10 @@ const Bootcamp = require('../model/BootCamp')
 
 const asyncHandler = require('../middleware/async')
 
+const geoCoder = require('../utils/geoCoder')
+
 module.exports.GetBootCamps = asyncHandler(async (req, res, next) => {
-    const bootcamps = await Bootcamp.find()
+    const bootcamps = await Bootcamp.find(req.query)
     res.status(200).json({
         success: true,
         count: bootcamps.length,
@@ -12,6 +14,8 @@ module.exports.GetBootCamps = asyncHandler(async (req, res, next) => {
     })
 
 })
+
+
 
 module.exports.GetBootCampById = asyncHandler(async (req, res, next) => {
     const bootcamp = await Bootcamp.findById(req.params.id)
@@ -34,7 +38,10 @@ module.exports.AddBootCamp = asyncHandler(async (req, res, next) => {
 
 
 module.exports.UpdateBootCamp = asyncHandler(async (req, res, next) => {
-    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {new: true,runValidators: true})
+    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    })
     res.status.json({
         success: true,
         data: bootcamp,
@@ -49,5 +56,34 @@ module.exports.DeleteBootCamp = asyncHandler(async (req, res, next) => {
         success: true,
         data: {},
         message: `Delete to ${req.params.id} bootcamp`
+    })
+})
+
+module.exports.GetBootCampByRadius = asyncHandler(async (req, res, next) => {
+    const {
+        zipcode,
+        distance
+    } = req.params
+
+    const loc = await geoCoder.geocode(zipcode)
+    const lat = loc[0].latitude
+    const lng = loc[0].longitude
+
+    const radius = distance / 3963
+
+    const bootcamps = await Bootcamp.find({
+        location: {
+            $geoWithin: {
+                $centerSphere: [
+                    [lng, lat], radius
+                ]
+            }
+        }
+    })
+
+    res.status(200).json({
+        success: true,
+        count: bootcamps.length,
+        data: bootcamps
     })
 })
