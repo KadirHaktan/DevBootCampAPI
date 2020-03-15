@@ -5,6 +5,7 @@ const dotenv=require('dotenv')
 //Requirment packages
 
 const bootcamp=require('./routes/bootcamp')
+const course=require('./routes/course')
 //routes
 
 
@@ -30,6 +31,7 @@ if(process.env.NODE_ENV==='development'){
     app.use(morgan('dev'))
 }
 app.use('/api/v1/bootcamps',bootcamp)
+app.use('/api/v1/courses',course)
 //use the routes with middleware
 
 app.use(errorHandler)
