@@ -2,10 +2,15 @@
 
 const express=require('express')
 const dotenv=require('dotenv')
+const fileupload=require('express-fileupload')
+const path=require('path')
+const cookieParser=require('cookie-parser')
 //Requirment packages
 
 const bootcamp=require('./routes/bootcamp')
 const course=require('./routes/course')
+const user=require('./routes/user')
+const auth=require('./routes/auth')
 //routes
 
 
@@ -27,11 +32,19 @@ ConnectionDb()
 
 app.use(express.json())
 
+app.use(cookieParser())
+
 if(process.env.NODE_ENV==='development'){
     app.use(morgan('dev'))
 }
+
+app.use(fileupload())
+app.use(express.static(path.join(__dirname,'public')))
+
 app.use('/api/v1/bootcamps',bootcamp)
 app.use('/api/v1/courses',course)
+app.use('/api/v1/user',user)
+app.use('/api/v1/auth',auth)
 //use the routes with middleware
 
 app.use(errorHandler)

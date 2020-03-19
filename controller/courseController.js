@@ -5,25 +5,19 @@ const ErrorResponse = require('../utils/ErrorResponse')
 
 
 exports.GetCourses = asyncHandler(async (req, res, next) => {
-    let query
     if (req.params.bootcampId) {
-        query = Course.find({
-            bootcamp: req.params.bootcampId
-        }).populate("bootcamp")
-    } else {
-        query = Course.find().populate({
-            path: 'bootcamp',
-            select: 'name description'
-        })
+       const courses=await Course.find({bootcamp:req.params.bootcampId})
+
+       return res.status(200).json({
+           success:true,
+           data:courses,
+           count:courses.length
+       })
     }
 
-    const courses = await query
-
-    res.status(200).json({
-        success: true,
-        data: courses,
-        count: courses.length
-    })
+    else{
+        return res.status(200).json(res.advancedResult)
+    }
 })
 
 exports.GetCourseById = asyncHandler(async (req, res, next) => {
