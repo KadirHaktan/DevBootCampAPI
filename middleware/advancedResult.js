@@ -1,5 +1,5 @@
 
-const advancedResults=(model,populate,message)=>async(req,res,next)=>{
+const advancedResults=(model,message,...populate)=>async(req,res,next)=>{
     let query;
     const reqQuery = {
         ...req.query
@@ -14,7 +14,9 @@ const advancedResults=(model,populate,message)=>async(req,res,next)=>{
     query = model.find(JSON.parse(queryStr))
 
     if(populate){
-        query=query.populate(populate)
+        query=query.populate(populate.map(p=>{
+            return p
+        }))
     }
 
     if (req.query.select) {
