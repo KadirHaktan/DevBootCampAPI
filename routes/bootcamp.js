@@ -1,7 +1,8 @@
 const express = require('express')
 const route = express.Router()
 const controller = require('../controller/bootcampController')
-const courseRouter = require('./course')
+const courseRouter=require('./course')
+const reviewRouter=require('./review')
 const advancedResult = require('../middleware/advancedResult')
 const Bootcamp = require('../model/BootCamp')
 const {
@@ -13,6 +14,7 @@ route.route('/').get(protect, advancedResult(Bootcamp, 'Success Get Bootcamp or 
 route.route('/:id').get(protect, controller.GetBootCampById)
 
 route.use('/:bootcampId/courses', courseRouter)
+route.use("/:bootcampId/reviews",reviewRouter)
 
 route.route('/radius/:zipcode/:distance').get(protect, controller.GetBootCampByRadius)
 
