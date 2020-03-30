@@ -11,6 +11,7 @@ const bootcamp=require('./routes/bootcamp')
 const course=require('./routes/course')
 const user=require('./routes/user')
 const auth=require('./routes/auth')
+const review=require('./routes/review')
 //routes
 
 
@@ -45,6 +46,7 @@ app.use('/api/v1/bootcamps',bootcamp)
 app.use('/api/v1/courses',course)
 app.use('/api/v1/user',user)
 app.use('/api/v1/auth',auth)
+app.use('/api/v1/reviews',review)
 //use the routes with middleware
 
 app.use(errorHandler)

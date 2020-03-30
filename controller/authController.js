@@ -2,11 +2,14 @@ const User = require('../model/User')
 const asyncHandler = require('../middleware/async')
 const ErrorResponse = require('../utils/ErrorResponse')
 const sendEmail = require('../utils/sendEmail')
-const crypto=require('crypto')
+const crypto = require('crypto')
 
 
 exports.Login = asyncHandler(async (req, res, next) => {
-    const {email,password} = req.body
+    const {
+        email,
+        password
+    } = req.body
 
 
     if (!email || !password) {
@@ -50,16 +53,14 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
         email: req.body.email
     })
 
-    
+
 
     if (!user) {
         return next(new ErrorResponse("User can not found", 404))
     }
 
     const resetToken = user.getResetPasswordToken()
-
-    console.log(resetToken)
-
+    
     await user.save({
         validateBeforeSave: false
     })
@@ -96,30 +97,64 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 })
 
 
-exports.ResetPassword=asyncHandler(async(req,res,next)=>{
-    const resetPasswordToken=crypto.createHash('sha256')
-    .update(req.params.resettoken)
-    .digest('hex')
+exports.ResetPassword = asyncHandler(async (req, res, next) => {
+    const resetPasswordToken = crypto.createHash('sha256')
+        .update(req.params.resettoken)
+        .digest('hex')
 
-    const user= await User.findOne({
+    const user = await User.findOne({
         resetPasswordToken,
-        resetPasswordExpire:{$gt:Date.now()}
+        resetPasswordExpire: {
+            $gt: Date.now()
+        }
     })
 
-    if(!user){
-        return next(new ErrorResponse('Invalid token',400))
+    if (!user) {
+        return next(new ErrorResponse('Invalid token', 400))
     }
 
-    user.password=req.body.password
-    user.resetPasswordToken=undefined
-    user.getResetPasswordExpire=undefined
+    user.password = req.body.password
+    user.resetPasswordToken = undefined
+    user.getResetPasswordExpire = undefined
 
     await user.save()
 
+    sendTokenResponse(user, 200, res)
+
+
+
+})
+
+
+exports.UpdateUserDetail = asyncHandler(async (req, res, next) => {
+    const UpdateFields = {
+        name: req.body.name,
+        email: req.body.email
+    }
+
+    const user = await User.findByIdAndUpdate(req.user.id, UpdateFields, {
+        new: true,
+        runValidators: true
+    })
+
+    res.status(200).json({
+        success: true,
+        data: user
+    })
+})
+
+
+exports.UpdatePassword = asyncHandler(async (req, res, next) => {
+    const user = User.findById(req.user.id).select("+password")
+
+    if (!(user.matchPassword(req.body.currentPassword))) {
+        return next(new ErrorResponse('Password is incorrect', 401))
+    }
+
+    user.password = req.body.newPassword
+    await user.save()
+
     sendTokenResponse(user,200,res)
-
-
-
 })
 
 
@@ -137,8 +172,9 @@ const sendTokenResponse = (user, statusCode, res) => {
         options.secure = true
     }
 
-    res.status(statusCode).cookie('t', token, options).json({success: true,token})
+    res.status(statusCode).cookie('t', token, options).json({
+        success: true,
+        token
+    })
 
 }
-
-
