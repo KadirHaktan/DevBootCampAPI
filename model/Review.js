@@ -35,5 +35,40 @@ const ReviewSchema=new Schema({
     }
 })
 
+ReviewSchema.statics.getAverageCost=async function(bootcampId){
+    const obj=await this.aggregate([
+        {
+            $match:{bootcamp:bootcampId}
+        },
+        {
+            $group:{
+                _id:'$bootcamp',
+                avarageRating:{$avg:'$rating'}
+            }
+        }
+    ])
+
+    try{
+       await  this.model('Bootcamp').findByIdAndUpdate(bootcampId,{
+            avarageRating:obj[0].avarageRating
+        })
+    }
+    catch(err){
+        console.error(err)
+    }
+    
+    
+    ReviewSchema.post('save',function(){
+        this.constructor.getAverageCost(this.bootcamp)
+    })
+    
+    ReviewSchema.pre('remove',function(){
+        this.constructor.getAverageCost(this.bootcamp)
+    })
+
+}
+
+ReviewSchema.index({bootcamp:1,user:1},{unique:true})
+
 module.exports=mongoose.model('Review',ReviewSchema)
 

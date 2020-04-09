@@ -5,6 +5,12 @@ const dotenv=require('dotenv')
 const fileupload=require('express-fileupload')
 const path=require('path')
 const cookieParser=require('cookie-parser')
+const sanitize=require('express-mongo-sanitize')
+const helmet=require('helmet')
+const xss=require('xss-clean')
+const rateLimit=require('express-rate-limit')
+const hpp=require('hpp')
+const cors=require('cors')
 //Requirment packages
 
 const bootcamp=require('./routes/bootcamp')
@@ -40,6 +46,26 @@ if(process.env.NODE_ENV==='development'){
 }
 
 app.use(fileupload())
+
+app.use(sanitize())
+
+app.use(helmet())
+
+app.use(xss())
+
+
+app.use(rateLimit({
+    windowMs:10*60*1000,
+    max:100,
+    message:{
+        result:"Too many request,please wait to some minutes"
+    }
+}))
+
+app.use(hpp())
+
+app.use(cors())
+
 app.use(express.static(path.join(__dirname,'public')))
 
 app.use('/api/v1/bootcamps',bootcamp)

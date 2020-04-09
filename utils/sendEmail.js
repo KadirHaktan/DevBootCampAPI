@@ -13,7 +13,7 @@ const sendEmail=async(options)=>{
       });
 
       const message={
-          from:`${process.env.FROM_NAME} <${process.env.FROM_MAIL}`,
+          from:`${process.env.FROM_NAME} <${process.env.FROM_MAIL}>`,
           to:options.email,
           subject:options.subject,
           text:options.message
@@ -21,7 +21,6 @@ const sendEmail=async(options)=>{
 
       const info=await transporter.sendMail(message)
 
-      console.log(info.messageId)
     
 }
 

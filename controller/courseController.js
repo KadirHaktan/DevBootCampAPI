@@ -36,6 +36,7 @@ exports.GetCourseById = asyncHandler(async (req, res, next) => {
 
 exports.AddCourse = asyncHandler(async (req, res, next) => {
     req.body.bootcamp = req.params.bootcampId
+    
 
     const bootcamp = await Bootcamp.findById(req.params.bootcampId)
 
@@ -66,7 +67,7 @@ exports.UpdateCourse = asyncHandler(async (req, res, next) => {
     let course = await Course.findById(req.params.id)
     if (!course) {
         return next(
-            new ErrorResponse(`No bootcamp with ${req.params.id}`, 404)
+            new ErrorResponse(`No course with ${req.params.id}`, 404)
         )
     }
 
