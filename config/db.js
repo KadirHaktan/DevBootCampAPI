@@ -2,8 +2,10 @@
 
 const mongoose=require('mongoose')
 
+const connectionString=process.env.MONGO_URI
+
 const connectDb= async ()=>{
-    const con=await mongoose.connect("mongodb+srv://Hacktin:8Hn0Hi6JW2FYeJBj@cluster0-daa2m.mongodb.net/devBootCamper?retryWrites=true&w=majority",{
+    const con=await mongoose.connect(connectionString,{
         useNewUrlParser:true,
         useCreateIndex:true,
         useFindAndModify:false,
