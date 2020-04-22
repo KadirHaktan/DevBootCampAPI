@@ -86,7 +86,6 @@ Middleware using can be logging,errorHandler,your customize response,authenticat
 ```
 
 - Version: 1.0.0
-- License: MIT
 - Project Course Link:https://www.udemy.com/course/nodejs-api-masterclass/
 
 
